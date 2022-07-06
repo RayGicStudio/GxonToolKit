@@ -1,13 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using GxonToolKit.Helpers;
-
-using Windows.Foundation.Metadata;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
-namespace GxonToolKit.Contracts.Services;
+﻿namespace GxonToolKit.Contracts.Services;
 
 public interface IBackdropeSelectorService
 {
