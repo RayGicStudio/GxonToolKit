@@ -1,20 +1,101 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Composition.SystemBackdrops;
-
-using WinRT;
+﻿using System;
+using System.Threading.Tasks;
 
 using GxonToolKit.Contracts.Services;
 using GxonToolKit.Helpers;
+using GxonToolKit.Enums;
+
+using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Xaml;
+
+using WinRT;
 
 namespace GxonToolKit.Services;
-public class BackdropSelectorService : IBackdropeSelectorService
+
+public class PersonalizationService : IPersonalizationService
 {
+    private const string ThemeSettingsKey = "AppBackgroundRequestedTheme";
+    private const string BackdropSettingsKey = "AppBackdropMaterial";
+
     private readonly Window m_window = App.MainWindow;
     private WindowsSystemDispatcherQueueHelper m_wsdqHelper;
-    private IBackdropeSelectorService.BackdropType m_currentBackdrop;
+    private ElementBackdrop m_currentBackdrop;
     private MicaController m_micaController;
     private DesktopAcrylicController m_acrylicController;
     private SystemBackdropConfiguration m_configurationSource;
+
+    /// <inheritdoc/>
+    public ElementTheme Theme { get; set; } = ElementTheme.Default;
+    /// <inheritdoc/>
+    public ElementBackdrop Backdrop { get; set; } = ElementBackdrop.DefaultColor;
+
+    private readonly ILocalSettingsService _localSettingsService;
+
+    public PersonalizationService(ILocalSettingsService localSettingsService)
+    {
+        _localSettingsService = localSettingsService;
+    }
+
+    public async Task InitializeAsync()
+    {
+        Theme = await LoadThemeFromSettingsAsync();
+        Backdrop = await LoadBackdropFromSettingsAsync();
+        await Task.CompletedTask;
+    }
+
+    public async Task SetThemeAsync(ElementTheme theme)
+    {
+        Theme = theme;
+
+        await SetRequestedThemeAsync();
+        await SaveThemeInSettingsAsync(Theme);
+    }
+
+    public async Task SetRequestedThemeAsync()
+    {
+        if (App.MainWindow.Content is FrameworkElement rootElement)
+        {
+            rootElement.RequestedTheme = Theme;
+
+            TitleBarHelper.UpdateTitleBar(Theme);
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task<ElementTheme> LoadThemeFromSettingsAsync()
+    {
+        var themeName = await _localSettingsService.ReadSettingAsync<string>(ThemeSettingsKey);
+
+        if (Enum.TryParse(themeName, out ElementTheme cacheTheme))
+        {
+            return cacheTheme;
+        }
+
+        return ElementTheme.Default;
+    }
+
+    private async Task<ElementBackdrop> LoadBackdropFromSettingsAsync()
+    {
+        var backdrop = await _localSettingsService.ReadSettingAsync<string>(BackdropSettingsKey);
+
+        if (Enum.TryParse(backdrop, out ElementBackdrop elementBackdrop))
+        {
+            return elementBackdrop;
+        }
+
+        return ElementBackdrop.DefaultColor;
+    }
+
+    private async Task SaveThemeInSettingsAsync(ElementTheme theme)
+    {
+        await _localSettingsService.SaveSettingAsync(ThemeSettingsKey, theme.ToString());
+    }
+
+    private async Task SaveBackdropInSettingsAsync(ElementBackdrop backdrop)
+    {
+        await _localSettingsService.SaveSettingAsync(BackdropSettingsKey, backdrop.ToString());
+    }
 
     /// <inheritdoc/>
     public void EnsureWSDQExists()
@@ -24,11 +105,11 @@ public class BackdropSelectorService : IBackdropeSelectorService
     }
 
     /// <inheritdoc/>
-    public void SetBackdrop(IBackdropeSelectorService.BackdropType type)
+    public async Task SetBackdropAsync(ElementBackdrop type)
     {
         EnsureWSDQExists();
 
-        m_currentBackdrop = IBackdropeSelectorService.BackdropType.DefaultColor;
+        m_currentBackdrop = ElementBackdrop.DefaultColor;
 
         if (m_micaController != null)
         {
@@ -46,28 +127,31 @@ public class BackdropSelectorService : IBackdropeSelectorService
         ((FrameworkElement)m_window.Content).ActualThemeChanged -= Window_ThemeChanged;
         m_configurationSource = null;
 
-        if (type == IBackdropeSelectorService.BackdropType.Mica)
+        if (type == ElementBackdrop.Mica)
         {
-            if (TrySetMicaBackdrop())
+            if (await TrySetMicaBackdropAsync())
             {
                 m_currentBackdrop = type;
             }
             else
             {
-                type = IBackdropeSelectorService.BackdropType.DefaultColor;
+                type = ElementBackdrop.DefaultColor;
             }
         }
-        if (type == IBackdropeSelectorService.BackdropType.DesktopAcrylic)
+        if (type == ElementBackdrop.DesktopAcrylic)
         {
-            if (TrySetAcrylicBackdrop())
+            if (await TrySetAcrylicBackdropAsync())
             {
                 m_currentBackdrop = type;
             }
             else
             {
-                type = IBackdropeSelectorService.BackdropType.DefaultColor;
+                type = ElementBackdrop.DefaultColor;
             }
         }
+
+        Backdrop = m_currentBackdrop;
+        await SaveBackdropInSettingsAsync(Backdrop);
     }
 
     /// <summary>
@@ -132,7 +216,7 @@ public class BackdropSelectorService : IBackdropeSelectorService
     /// Try to set backdrop material to mica.
     /// </summary>
     /// <returns><c>true</c> if succeed, <c>false</c> if mica is not supported on this system.</returns>
-    private bool TrySetMicaBackdrop()
+    private async Task<bool> TrySetMicaBackdropAsync()
     {
         if (MicaController.IsSupported())
         {
@@ -152,6 +236,8 @@ public class BackdropSelectorService : IBackdropeSelectorService
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
             m_micaController.AddSystemBackdropTarget(m_window.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
             m_micaController.SetSystemBackdropConfiguration(m_configurationSource);
+
+            await Task.CompletedTask;
             return true; // succeeded
         }
 
@@ -162,9 +248,9 @@ public class BackdropSelectorService : IBackdropeSelectorService
     /// Try to set backdrop material to acrylic.
     /// </summary>
     /// <returns><c>true</c> if succeed, <c>false</c> if acrylic is not supported on this system.</returns>
-    private bool TrySetAcrylicBackdrop()
+    private async Task<bool> TrySetAcrylicBackdropAsync()
     {
-        if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+        if (DesktopAcrylicController.IsSupported())
         {
             // Hooking up the policy object
             m_configurationSource = new SystemBackdropConfiguration();
@@ -182,6 +268,8 @@ public class BackdropSelectorService : IBackdropeSelectorService
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
             m_acrylicController.AddSystemBackdropTarget(m_window.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
             m_acrylicController.SetSystemBackdropConfiguration(m_configurationSource);
+
+            await Task.CompletedTask;
             return true; // succeeded
         }
 

@@ -201,4 +201,16 @@
   <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>https://114514.1919810</value>
   </data>
+  <data name="Settings_Backdrop.Text" xml:space="preserve">
+    <value>应用背景</value>
+  </data>
+  <data name="Settings_Backdrop_Acrylic.Content" xml:space="preserve">
+    <value>亚克力</value>
+  </data>
+  <data name="Settings_Backdrop_DefaultColor.Content" xml:space="preserve">
+    <value>纯色</value>
+  </data>
+  <data name="Settings_Backdrop_Mica.Content" xml:space="preserve">
+    <value>云母</value>
+  </data>
 </root>

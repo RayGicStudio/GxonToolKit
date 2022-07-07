@@ -33,7 +33,7 @@ public partial class App : Application
 
             // Services
             services.AddSingleton<ILocalSettingsService, LocalSettingsServicePackaged>();
-            services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
+            services.AddSingleton<IPersonalizationService, PersonalizationService>();
             services.AddTransient<IWebViewService, WebViewService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
 

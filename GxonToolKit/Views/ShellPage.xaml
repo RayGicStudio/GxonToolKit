@@ -38,29 +38,25 @@
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
             <NavigationView.MenuItems>
-                <NavigationViewItem x:Uid="Shell_Home" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.HomeViewModel">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_WinPreviewUtilities" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.WinPreviewUtilitiesViewModel">
+				<NavigationViewItem x:Uid="Shell_Home" Icon="Home" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.HomeViewModel" />
+				<NavigationViewItem x:Uid="Shell_WinPreviewUtilities" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.WinPreviewUtilitiesViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem x:Uid="Shell_GxonActivator" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.GxonActivatorViewModel">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe705;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem x:Uid="Shell_GxonDlCore" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.GxonDlCoreViewModel">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xebd3;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem x:Uid="Shell_HexEditor" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.HexEditorViewModel">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe792;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem x:Uid="Shell_Web" helpers:NavigationHelper.NavigateTo="GxonToolKit.ViewModels.WebViewModel">

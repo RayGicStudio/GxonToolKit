@@ -3,11 +3,13 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
+using GxonToolKit.Enums;
+
 namespace GxonToolKit.Helpers;
 
-public class EnumToBooleanConverter : IValueConverter
+public class ElementBackdropToBooleanConverter : IValueConverter
 {
-    public EnumToBooleanConverter()
+    public ElementBackdropToBooleanConverter()
     {
     }
 
@@ -15,12 +17,12 @@ public class EnumToBooleanConverter : IValueConverter
     {
         if (parameter is string enumString)
         {
-            if (!Enum.IsDefined(typeof(ElementTheme), value))
+            if (!Enum.IsDefined(typeof(ElementBackdrop), value))
             {
                 throw new ArgumentException("ExceptionEnumToBooleanConverterValueMustBeAnEnum");
             }
 
-            var enumValue = Enum.Parse(typeof(ElementTheme), enumString);
+            var enumValue = Enum.Parse(typeof(ElementBackdrop), enumString);
 
             return enumValue.Equals(value);
         }

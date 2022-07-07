@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using GxonToolKit.Contracts.Services;
 using GxonToolKit.Helpers;
+using GxonToolKit.Enums;
 
 using Microsoft.UI.Xaml;
 
@@ -14,13 +15,20 @@ namespace GxonToolKit.ViewModels;
 
 public class SettingsViewModel : ObservableRecipient
 {
-    private readonly IThemeSelectorService _themeSelectorService;
+    private readonly IPersonalizationService _personalizationService;
     private ElementTheme _elementTheme;
+    private ElementBackdrop _elementBackdrop;
 
     public ElementTheme ElementTheme
     {
         get => _elementTheme;
         set => SetProperty(ref _elementTheme, value);
+    }
+
+    public ElementBackdrop ElementBackdrop
+    {
+        get => _elementBackdrop;
+        set => SetProperty(ref _elementBackdrop, value);
     }
 
     private string _versionDescription;
@@ -45,7 +53,7 @@ public class SettingsViewModel : ObservableRecipient
                         if (ElementTheme != param)
                         {
                             ElementTheme = param;
-                            await _themeSelectorService.SetThemeAsync(param);
+                            await _personalizationService.SetThemeAsync(param);
                         }
                     });
             }
@@ -54,10 +62,34 @@ public class SettingsViewModel : ObservableRecipient
         }
     }
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService)
+    private ICommand _switchBackdropCommand;
+
+    public ICommand SwitchBackdropCommand
     {
-        _themeSelectorService = themeSelectorService;
-        _elementTheme = _themeSelectorService.Theme;
+        get
+        {
+            if (_switchBackdropCommand == null)
+            {
+                _switchBackdropCommand = new RelayCommand<ElementBackdrop>(
+                    async (param) =>
+                    {
+                        if (ElementBackdrop != param)
+                        {
+                            ElementBackdrop = param;
+                            await _personalizationService.SetBackdropAsync(param);
+                        }
+                    });
+            }
+
+            return _switchBackdropCommand;
+        }
+    }
+
+    public SettingsViewModel(IPersonalizationService personalizationService)
+    {
+        _personalizationService = personalizationService;
+        _elementTheme = _personalizationService.Theme;
+        _elementBackdrop = _personalizationService.Backdrop;
         VersionDescription = GetVersionDescription();
     }
 
