@@ -19,7 +19,6 @@ public class PersonalizationService : IPersonalizationService
 
     private readonly Window m_window = App.MainWindow;
     private WindowsSystemDispatcherQueueHelper m_wsdqHelper;
-    private ElementBackdrop m_currentBackdrop;
     private MicaController m_micaController;
     private DesktopAcrylicController m_acrylicController;
     private SystemBackdropConfiguration m_configurationSource;
@@ -107,9 +106,16 @@ public class PersonalizationService : IPersonalizationService
     /// <inheritdoc/>
     public async Task SetBackdropAsync(ElementBackdrop type)
     {
-        EnsureWSDQExists();
+        Backdrop = type;
 
-        m_currentBackdrop = ElementBackdrop.DefaultColor;
+        await SetRequestedBackdropAsync();
+        await SaveBackdropInSettingsAsync(Backdrop);
+    }
+
+    /// <inheritdoc/>
+    public async Task SetRequestedBackdropAsync()
+    {
+        EnsureWSDQExists();
 
         if (m_micaController != null)
         {
@@ -127,31 +133,14 @@ public class PersonalizationService : IPersonalizationService
         ((FrameworkElement)m_window.Content).ActualThemeChanged -= Window_ThemeChanged;
         m_configurationSource = null;
 
-        if (type == ElementBackdrop.Mica)
+        if (
+            ((Backdrop == ElementBackdrop.Mica) && (!await TrySetMicaBackdropAsync())) ||
+            ((Backdrop == ElementBackdrop.DesktopAcrylic) && (!await TrySetAcrylicBackdropAsync()))
+        )
         {
-            if (await TrySetMicaBackdropAsync())
-            {
-                m_currentBackdrop = type;
-            }
-            else
-            {
-                type = ElementBackdrop.DefaultColor;
-            }
+            Backdrop = ElementBackdrop.DefaultColor;
+            await SetRequestedBackdropAsync();
         }
-        if (type == ElementBackdrop.DesktopAcrylic)
-        {
-            if (await TrySetAcrylicBackdropAsync())
-            {
-                m_currentBackdrop = type;
-            }
-            else
-            {
-                type = ElementBackdrop.DefaultColor;
-            }
-        }
-
-        Backdrop = m_currentBackdrop;
-        await SaveBackdropInSettingsAsync(Backdrop);
     }
 
     /// <summary>

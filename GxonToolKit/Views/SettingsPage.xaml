@@ -19,8 +19,8 @@
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                 <TextBlock x:Uid="Settings_Theme" />
 
-                <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                    <RadioButton
+				<StackPanel Margin="{StaticResource XSmallTopMargin}">
+					<RadioButton
                         x:Uid="Settings_Theme_Light"
                         Command="{x:Bind ViewModel.SwitchThemeCommand}"
                         IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource ElementThemeToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
@@ -60,7 +60,7 @@
                         Command="{x:Bind ViewModel.SwitchBackdropCommand}"
                         IsChecked="{x:Bind ViewModel.ElementBackdrop, Converter={StaticResource ElementBackdropToBooleanConverter}, ConverterParameter=Mica, Mode=OneWay}"
                         FontSize="15"
-                        GroupName="AppTheme">
+                        GroupName="AppBackdrop">
 						<RadioButton.CommandParameter>
 							<enums:ElementBackdrop>Mica</enums:ElementBackdrop>
 						</RadioButton.CommandParameter>
@@ -70,7 +70,7 @@
                         Command="{x:Bind ViewModel.SwitchBackdropCommand}"
                         IsChecked="{x:Bind ViewModel.ElementBackdrop, Converter={StaticResource ElementBackdropToBooleanConverter}, ConverterParameter=DesktopAcrylic, Mode=OneWay}"
                         FontSize="15"
-                        GroupName="AppTheme">
+                        GroupName="AppBackdrop">
 						<RadioButton.CommandParameter>
 							<enums:ElementBackdrop>DesktopAcrylic</enums:ElementBackdrop>
 						</RadioButton.CommandParameter>
@@ -80,7 +80,7 @@
                         Command="{x:Bind ViewModel.SwitchBackdropCommand}"
                         IsChecked="{x:Bind ViewModel.ElementBackdrop, Converter={StaticResource ElementBackdropToBooleanConverter}, ConverterParameter=DefaultColor, Mode=OneWay}"
                         FontSize="15"
-                        GroupName="AppTheme">
+                        GroupName="AppBackdrop">
 						<RadioButton.CommandParameter>
 							<enums:ElementBackdrop>DefaultColor</enums:ElementBackdrop>
 						</RadioButton.CommandParameter>

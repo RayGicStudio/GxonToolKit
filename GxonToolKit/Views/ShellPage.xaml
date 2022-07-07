@@ -7,7 +7,6 @@
     xmlns:helpers="using:GxonToolKit.Helpers"
     xmlns:behaviors="using:GxonToolKit.Behaviors"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
     Loaded="OnLoaded">
 
     <Grid>

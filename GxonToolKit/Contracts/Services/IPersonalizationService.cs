@@ -50,4 +50,10 @@ public interface IPersonalizationService
     /// <param name="window">Window to set.</param>
     /// <param name="type">Backdrop material type.</param>
     public Task SetBackdropAsync(ElementBackdrop type);
+
+    /// <summary>
+    /// Set backdrop to requested one.
+    /// </summary>
+    /// <returns>Task.</returns>
+    public Task SetRequestedBackdropAsync();
 }

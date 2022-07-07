@@ -15,14 +15,14 @@ public class ActivationService : IActivationService
 {
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
-    private readonly IPersonalizationService _themeSelectorService;
+    private readonly IPersonalizationService _personalizationService;
     private UIElement _shell = null;
 
     public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers, IPersonalizationService themeSelectorService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
-        _themeSelectorService = themeSelectorService;
+        _personalizationService = themeSelectorService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -64,13 +64,14 @@ public class ActivationService : IActivationService
 
     private async Task InitializeAsync()
     {
-        await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
+        await _personalizationService.InitializeAsync().ConfigureAwait(false);
         await Task.CompletedTask;
     }
 
     private async Task StartupAsync()
     {
-        await _themeSelectorService.SetRequestedThemeAsync();
+        await _personalizationService.SetRequestedThemeAsync();
+        await _personalizationService.SetRequestedBackdropAsync();
         await Task.CompletedTask;
     }
 }
