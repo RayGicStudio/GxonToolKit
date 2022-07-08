@@ -56,6 +56,21 @@ public class PersonalizationService : IPersonalizationService
         {
             rootElement.RequestedTheme = Theme;
 
+            if (Theme == ElementTheme.Default)
+            {
+                var nTheme = SystemThemeHelper.GetSystemTheme();
+                switch (nTheme)
+                {
+                    case -1:
+                        throw new ArgumentException("PersonalizationServiceCannotGetSystemTheme");
+                    case 0:
+                        Theme = ElementTheme.Dark;
+                        break;
+                    case 1:
+                        Theme = ElementTheme.Light;
+                        break;
+                }
+            }
             TitleBarHelper.UpdateTitleBar(Theme);
         }
 
