@@ -10,7 +10,7 @@
   <Identity
     Name="93986BDE-3EE9-411B-A329-01B4C050657C"
     Publisher="CN=EFL"
-    Version="1.0.0.0" />
+    Version="0.0.1.0" />
 
   <Properties>
     <DisplayName>GxonToolKit</DisplayName>
